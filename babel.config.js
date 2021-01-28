@@ -1,7 +1,7 @@
 const { declare } = require('@babel/helper-plugin-utils')
 const path = require('path')
 
-const custom = declare(api => {
+const custom = declare((api) => {
   api.assertVersion(7)
 
   return {
@@ -17,21 +17,23 @@ const custom = declare(api => {
           root: ['.'],
           alias: {
             pages: path.join(__dirname, './src/pages'),
-            components: path.join(__dirname, './src/components')
-          }
-        }
-      ]
-    ]
+            components: path.join(__dirname, './src/components'),
+          },
+        },
+      ],
+    ],
   }
 })
 
-module.exports = api => {
+module.exports = (api) => {
   const preset_env = api.env('test')
     ? [['@babel/preset-env', { modules: 'commonjs' }]]
     : []
 
   return {
     presets: [...preset_env, custom, 'next/babel'],
-    plugins: [['styled-components', { ssr: true }]]
+    // namespace added due to the "No styles found" issue in tests
+    // see details in https://github.com/styled-components/jest-styled-components/issues/294
+    plugins: [['styled-components', { ssr: true, namespace: 'sc-' }]],
   }
 }
