@@ -1,7 +1,13 @@
 import React from 'react'
-import { Layout } from '../components/Layout'
+import PackagesManager from '../modules/packagesManager/PackagesManager'
+import { getProducts } from '../modules/packagesManager/services'
+import { Product } from '../modules/packagesManager/types'
 
-const Index = () => (
+interface Props {
+  initialProducts: Product[]
+}
+
+const Index: React.FC<Props> = ({ initialProducts }) => (
   <>
     <header
       style={{
@@ -16,9 +22,19 @@ const Index = () => (
     </header>
 
     <section style={{ height: 'calc(100vh - 50px)', overflow: 'hidden' }}>
-      <Layout />
+    <PackagesManager initialProducts={initialProducts} />
     </section>
   </>
 )
+
+export async function getServerSideProps() {
+  const data = await getProducts()
+
+  return {
+    props: {
+      initialProducts: data,
+    },
+  }
+}
 
 export default Index
