@@ -36,11 +36,11 @@ const ShipButton = styled(Button)`
   font-weight: bold;
 `
 
-const Warning = styled.p`
+const WarningNotification = styled.p`
   color: red;
 `
 
-const Success = styled.p`
+const SuccessNotification = styled.p`
   color: green;
 `
 
@@ -90,10 +90,14 @@ const PackagesPanel: React.FC<Props> = ({
       </ActionsContainer>
 
       {isShipWarningVisible ? (
-        <Warning>You cannot ship until all products are packed!</Warning>
+        <WarningNotification>
+          You cannot ship until all products are packed!
+        </WarningNotification>
       ) : null}
 
-      {showSuccessMessage ? <Success>Packages were shipped!</Success> : null}
+      {showSuccessMessage ? (
+        <SuccessNotification>Packages were shipped!</SuccessNotification>
+      ) : null}
 
       <TabsContainer>
         {packages.map((productsPackage, index) => (

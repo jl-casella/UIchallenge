@@ -20,7 +20,7 @@ const globalStyles = `
 `
 
 export default class MyDocument extends Document<{
-  styleTags: Array<React.ReactElement<{}>>
+  styleTags: React.ReactElement[]
 }> {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet()

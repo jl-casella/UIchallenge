@@ -9,8 +9,6 @@ interface Props {
   height?: string
 }
 
-// const StyledReactModal = styled(ReactModal)``
-
 const Modal: React.FC<Props> = ({
   isOpen,
   onClose,
