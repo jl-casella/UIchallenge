@@ -22,6 +22,15 @@ const HeaderContainer = styled.header`
   }
 `
 
+const ContentContainer = styled.section`
+  height: calc(100vh - 60px);
+  overflow: hidden;
+
+  @media (max-width: 800px) {
+    height: 100%;
+  }
+`
+
 interface Props {
   products: Product[]
 }
@@ -35,9 +44,9 @@ const Index: React.FC<Props> = ({ products }) => (
       {IS_DEV ? <BarcodeScannerHelper /> : null}
     </HeaderContainer>
 
-    <section style={{ height: 'calc(100vh - 50px)', overflow: 'hidden' }}>
+    <ContentContainer>
       <PackagesManager products={products} />
-    </section>
+    </ContentContainer>
   </>
 )
 

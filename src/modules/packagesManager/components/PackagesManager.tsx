@@ -14,7 +14,6 @@ const Container = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   height: 100%;
-  padding-bottom: 20px;
 
   @media (max-width: 800px) {
     height: auto;
