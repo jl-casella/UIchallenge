@@ -1,10 +1,8 @@
 import { useCallback, useState } from 'react'
 import { Product } from '../types'
 
-const useProductsState = (initialProducts: Product[]) => {
-  const [unpackedProducts, setUnpackedProducts] = useState<Product[]>(
-    initialProducts
-  )
+const useProductsState = (products: Product[]) => {
+  const [unpackedProducts, setUnpackedProducts] = useState<Product[]>(products)
 
   const removeProduct = useCallback((productToRemove: Product) => {
     setUnpackedProducts((products) => {

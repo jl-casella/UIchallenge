@@ -1,26 +1,34 @@
 import React from 'react'
 import ReactModal from 'react-modal'
 import styled from 'styled-components'
-import BarcodeScannerModal from './components/barcodeScanner/BarcodeScannerModal'
-import PackagesPanel from './components/packagesPanel/PackagesPanel'
-import ProductsPanel from './components/productsPanel/ProductsPanel'
-import useBarcodeScanner from './hooks/useBarcodeScanner'
-import usePackagesManagerState from './hooks/usePackagesManagerState'
-import { Product } from './types'
+import useBarcodeScanner from '../hooks/useBarcodeScanner'
+import usePackagesManagerState from '../hooks/usePackagesManagerState'
+import { Product } from '../types'
+import NoMatchingProductsModal from './barcodeScanner/NoMatchingProductsModal'
+import SelectProductModal from './barcodeScanner/SelectProductModal'
+import PackagesPanel from './packagesPanel/PackagesPanel'
+import ProductsPanel from './productsPanel/ProductsPanel'
 
 const Container = styled.div`
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   height: 100%;
+  padding-bottom: 20px;
+
+  @media (max-width: 800px) {
+    height: auto;
+    flex-direction: column;
+  }
 `
 
 interface Props {
-  initialProducts: Product[]
+  products: Product[]
 }
 
 ReactModal.setAppElement('body')
 
-const PackagesManager: React.FC<Props> = ({ initialProducts }) => {
+const PackagesManager: React.FC<Props> = ({ products }) => {
   const {
     unpackedProducts,
 
@@ -33,15 +41,22 @@ const PackagesManager: React.FC<Props> = ({ initialProducts }) => {
     packages,
     addPackage,
     removePackage,
-  } = usePackagesManagerState(initialProducts)
+
+    canShip,
+    onShip,
+    showSuccessMessage,
+  } = usePackagesManagerState(products)
 
   const {
-    isSelectProductModalOpen,
+    showSelectProductModal: isSelectProductModalOpen,
     onSelectProductModalCancel,
 
     scannedSku,
     productsWithScannedSku,
     onScannedProductSelect,
+
+    showNoMatchingProductsModal,
+    closeNoMatchingProductsModal,
   } = useBarcodeScanner(unpackedProducts, packProduct)
 
   return (
@@ -54,13 +69,21 @@ const PackagesManager: React.FC<Props> = ({ initialProducts }) => {
         removePackage={removePackage}
         selectPackage={selectPackage}
         unpackProduct={unpackProduct}
+        onShip={onShip}
+        canShip={canShip}
+        showSuccessMessage={showSuccessMessage}
       />
-      <BarcodeScannerModal
+      <SelectProductModal
         isOpen={isSelectProductModalOpen}
         scannedSku={scannedSku}
         productsWithScannedSku={productsWithScannedSku}
         onProductSelect={onScannedProductSelect}
         onCancel={onSelectProductModalCancel}
+      />
+      <NoMatchingProductsModal
+        scannedSku={scannedSku}
+        isOpen={showNoMatchingProductsModal}
+        onClose={closeNoMatchingProductsModal}
       />
     </Container>
   )

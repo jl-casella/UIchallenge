@@ -1,8 +1,11 @@
 import { act, renderHook } from '@testing-library/react-hooks'
 import _ from 'lodash'
 import getMockedProducts from '../../mocks/getMockedProducts'
+import { shipPackages } from '../../services'
 import usePackagesManagerState from '../usePackagesManagerState'
 import { initialPackage } from '../usePackagesState'
+
+jest.mock('../../services')
 
 describe('The usePackagesManagerState hook', () => {
   describe('Packing a product', () => {
@@ -31,7 +34,7 @@ describe('The usePackagesManagerState hook', () => {
       ])
     })
 
-    it('Packs two products into package on packProduct call (when any package is selected)', async () => {
+    it('Packs two different products into package on packProduct call (when any package is selected)', async () => {
       const { result } = renderHook(() =>
         usePackagesManagerState(getMockedProducts())
       )
@@ -90,7 +93,7 @@ describe('The usePackagesManagerState hook', () => {
       ).toBe(initialProductQuantity - 1)
     })
 
-    it('Removes product from unpacked list if quantity is equal 0 (the product was packed quantity times)', async () => {
+    it('Removes product from unpacked list if unpacked quantity is equal 0 (the product was packed quantity-times)', async () => {
       const { result } = renderHook(() =>
         usePackagesManagerState(getMockedProducts())
       )
@@ -160,7 +163,7 @@ describe('The usePackagesManagerState hook', () => {
       ])
     })
 
-    it('Reduces quantity of the product in the selected package on unpack (there is more than one package and more than one product in the selected package)', async () => {
+    it('Reduces quantity of the product in the selected package on unpack (if packages > 1 and products in package > 1)', async () => {
       const { result } = renderHook(() =>
         usePackagesManagerState(getMockedProducts())
       )
@@ -258,7 +261,7 @@ describe('The usePackagesManagerState hook', () => {
       expect(result.current.packages).toHaveLength(0)
     })
 
-    it('Unselects package that is removed if it was selected', async () => {
+    it('Resets package selection if removed package was selected', async () => {
       const { result } = renderHook(() =>
         usePackagesManagerState(getMockedProducts())
       )
@@ -323,6 +326,64 @@ describe('The usePackagesManagerState hook', () => {
       act(() => result.current.selectPackage(undefined))
 
       expect(result.current.selectedPackage).toBeUndefined()
+    })
+  })
+
+  describe('Ship', () => {
+    it('Does not allow to ship if all products are not packed', () => {
+      const { result } = renderHook(() =>
+        usePackagesManagerState(getMockedProducts())
+      )
+
+      expect(result.current.canShip).toBe(false)
+    })
+
+    it('Allows to ship packages if all products are packed', () => {
+      const product = getMockedProducts()[3]
+      const { result } = renderHook(() => usePackagesManagerState([product]))
+
+      expect(result.current.canShip).toBe(false)
+
+      _.times(product.quantity, () =>
+        act(() => result.current.packProduct(product))
+      )
+
+      expect(result.current.canShip).toBe(true)
+    })
+
+    it('Calls ship service with all packages with products when ship method is invoked', () => {
+      const mockedShipPackages = jest.fn()
+      ;(shipPackages as jest.Mock).mockImplementationOnce(mockedShipPackages)
+
+      const mockedProducts = getMockedProducts()
+      const { result } = renderHook(() =>
+        usePackagesManagerState(mockedProducts)
+      )
+
+      act(() => result.current.packProduct(mockedProducts[1]))
+      act(() => result.current.packProduct(mockedProducts[2]))
+      act(() => result.current.packProduct(mockedProducts[2]))
+
+      act(() => result.current.addPackage())
+      act(() => result.current.packProduct(mockedProducts[3]))
+
+      act(() => result.current.addPackage())
+
+      act(() => result.current.onShip())
+
+      expect(mockedShipPackages).toHaveBeenCalledWith([
+        {
+          id: 0,
+          products: [
+            { ...mockedProducts[1], quantity: 1 },
+            { ...mockedProducts[2], quantity: 2 },
+          ],
+        },
+        {
+          id: 1,
+          products: [{ ...mockedProducts[3], quantity: 1 }],
+        },
+      ])
     })
   })
 })

@@ -1,23 +1,40 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Product } from '../types'
 
+const isAllowedKey = (e: KeyboardEvent) => {
+  return (
+    (e.key >= 'a' && e.key <= 'z') ||
+    (e.key >= '0' && e.key <= '9') ||
+    e.key === '-'
+  )
+}
+
 const useBarcodeScanner = (
   unpackedProducts: Product[],
   packProduct: (product: Product) => void
 ) => {
+  const [showSelectProductModal, setShowSelectProductModal] = useState<boolean>(
+    false
+  )
   const [
-    isSelectProductModalOpen,
-    setIsSelectProductModalOpen,
+    showNoMatchingProductsModal,
+    setShowNoMatchingProductsModal,
   ] = useState<boolean>(false)
   const [scannedSku, setScannedSku] = useState<string>('')
+
   const productsWithScannedSku = useMemo(
     () => unpackedProducts.filter((product) => product.sku === scannedSku),
+    [scannedSku, unpackedProducts]
+  )
+  const productsStartingWithProvidedSku = useMemo(
+    () =>
+      unpackedProducts.filter((product) => product.sku.startsWith(scannedSku)),
     [scannedSku, unpackedProducts]
   )
 
   const onClose = useCallback(() => {
     setScannedSku('')
-    setIsSelectProductModalOpen(false)
+    setShowSelectProductModal(false)
   }, [])
 
   useEffect(() => {
@@ -27,13 +44,23 @@ const useBarcodeScanner = (
     }
 
     if (productsWithScannedSku.length > 1) {
-      setIsSelectProductModalOpen(true)
+      setShowSelectProductModal(true)
     }
-  }, [isSelectProductModalOpen, onClose, packProduct, productsWithScannedSku])
+
+    if (productsStartingWithProvidedSku.length === 0) {
+      setShowNoMatchingProductsModal(true)
+    }
+  }, [
+    showSelectProductModal,
+    onClose,
+    packProduct,
+    productsWithScannedSku,
+    productsStartingWithProvidedSku.length,
+  ])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if (!isSelectProductModalOpen) {
+      if (!showSelectProductModal && isAllowedKey(e)) {
         setScannedSku((prevValue) => prevValue + e.key)
       }
     }
@@ -42,7 +69,7 @@ const useBarcodeScanner = (
     return () => {
       document.removeEventListener('keydown', onKeyDown)
     }
-  }, [isSelectProductModalOpen])
+  }, [showSelectProductModal])
 
   const onScannedProductSelect = useCallback(
     (product: Product) => {
@@ -52,14 +79,22 @@ const useBarcodeScanner = (
     [onClose, packProduct]
   )
 
+  const closeNoMatchingProductsModal = useCallback(() => {
+    setScannedSku('')
+    setShowNoMatchingProductsModal(false)
+  }, [])
+
   return {
-    isSelectProductModalOpen,
+    showSelectProductModal,
 
     scannedSku,
     productsWithScannedSku,
 
     onScannedProductSelect,
     onSelectProductModalCancel: onClose,
+
+    showNoMatchingProductsModal,
+    closeNoMatchingProductsModal,
   }
 }
 

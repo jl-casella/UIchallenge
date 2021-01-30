@@ -1,14 +1,14 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Product } from '../types'
 import usePackagesState from './usePackagesState'
 import useProductsState from './useProductsState'
 
-const usePackagesManagerState = (initialProducts: Product[]) => {
+const usePackagesManagerState = (products: Product[]) => {
   const {
     unpackedProducts,
     addProduct: addProductToUnpacked,
     removeProduct: removeProductFromUnpacked,
-  } = useProductsState(initialProducts)
+  } = useProductsState(products)
 
   const {
     packages,
@@ -20,6 +20,9 @@ const usePackagesManagerState = (initialProducts: Product[]) => {
 
     selectedPackage,
     selectPackage,
+
+    onShip,
+    showSuccessMessage,
   } = usePackagesState()
 
   const packProduct = useCallback(
@@ -42,6 +45,11 @@ const usePackagesManagerState = (initialProducts: Product[]) => {
     [addProductToUnpacked, removeProductFromPackage, selectedPackage]
   )
 
+  const canShip = useMemo(
+    () => unpackedProducts.length === 0 && packages.length > 0,
+    [packages.length, unpackedProducts.length]
+  )
+
   return {
     unpackedProducts,
 
@@ -54,6 +62,10 @@ const usePackagesManagerState = (initialProducts: Product[]) => {
 
     packProduct,
     unpackProduct,
+
+    onShip,
+    canShip,
+    showSuccessMessage,
   }
 }
 

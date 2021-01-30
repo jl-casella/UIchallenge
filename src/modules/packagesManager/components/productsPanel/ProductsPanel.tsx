@@ -7,6 +7,11 @@ const Container = styled.div`
   flex: 1;
   padding: 20px;
   border-right: 1px solid grey;
+
+  @media (max-width: 800px) {
+    border-right: none;
+    border-bottom: 1px solid grey;
+  }
 `
 interface Props {
   products: Product[]
@@ -24,7 +29,7 @@ const ProductsPanel: React.FC<Props> = ({ products, packProduct }) => {
           <ProductsTable
             products={products}
             onRowClick={packProduct}
-            actions={[{ icon: '➔', onClick: packProduct }]}
+            actions={[{ text: '➔', onClick: packProduct }]}
           />
         </>
       ) : (

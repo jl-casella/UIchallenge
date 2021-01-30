@@ -14,7 +14,7 @@ const PackageView: React.FC<Props> = ({ productsPackage, unpackProduct }) => {
       <ProductsTable
         products={productsPackage.products}
         onRowClick={unpackProduct}
-        actions={[{ icon: '✖️', onClick: unpackProduct }]}
+        actions={[{ text: '✖️', onClick: unpackProduct }]}
       />
     </>
   ) : (

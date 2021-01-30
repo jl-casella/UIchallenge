@@ -9,12 +9,14 @@ interface Props {
   height?: string
 }
 
+// const StyledReactModal = styled(ReactModal)``
+
 const Modal: React.FC<Props> = ({
   isOpen,
   onClose,
   children,
-  width,
   height,
+  width,
 }) => {
   return (
     <ReactModal
@@ -24,8 +26,10 @@ const Modal: React.FC<Props> = ({
         content: {
           display: 'flex',
           margin: 'auto',
-          width,
           height,
+          width,
+          minWidth: '320px',
+          inset: '0px',
         },
       }}
     >

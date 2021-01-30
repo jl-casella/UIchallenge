@@ -37,7 +37,7 @@ interface Props {
   products: Product[]
   onRowClick: (product: Product) => void
   actions?: {
-    icon: string
+    text: string
     onClick: (product: Product) => void
   }[]
 }
@@ -48,7 +48,7 @@ const ProductsTable: React.FC<Props> = ({ products, onRowClick, actions }) => {
       <thead>
         <tr>
           <th>id</th>
-          <th>name</th>
+          <th>sku</th>
           <th>location</th>
           <th>quantity</th>
           {actions ? <th>actions</th> : null}
@@ -67,11 +67,11 @@ const ProductsTable: React.FC<Props> = ({ products, onRowClick, actions }) => {
                 <ActionsContainer>
                   {actions.map((action) => (
                     <div
-                      key={action.icon}
+                      key={action.text}
                       onClick={() => action.onClick(product)}
                       style={{ cursor: 'pointer' }}
                     >
-                      {action.icon}
+                      {action.text}
                     </div>
                   ))}
                 </ActionsContainer>

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { shipPackages } from '../services'
 import { Package, Product } from '../types'
 
 export const initialPackage: Package = { id: 0, products: [] }
@@ -8,6 +9,7 @@ const usePackagesState = () => {
   const [selectedPackageId, setSelectedPackageId] = useState<
     number | undefined
   >(initialPackage.id)
+  const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false)
 
   const selectedPackage = useMemo(
     () =>
@@ -106,6 +108,13 @@ const usePackagesState = () => {
     [selectedPackage]
   )
 
+  const onShip = useCallback(() => {
+    shipPackages(
+      packages.filter((productPackage) => productPackage.products.length > 0)
+    )
+    setShowSuccessMessage(true)
+  }, [packages])
+
   return {
     packages,
     addPackage,
@@ -116,6 +125,9 @@ const usePackagesState = () => {
 
     selectedPackage,
     selectPackage,
+
+    onShip,
+    showSuccessMessage,
   }
 }
 

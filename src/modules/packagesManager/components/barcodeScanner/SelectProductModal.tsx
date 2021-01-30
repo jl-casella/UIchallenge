@@ -25,7 +25,7 @@ interface Props {
   onCancel: () => void
 }
 
-const BarcodeScannerModal: React.FC<Props> = ({
+const SelectProductModal: React.FC<Props> = ({
   isOpen,
   scannedSku,
   onProductSelect,
@@ -33,7 +33,7 @@ const BarcodeScannerModal: React.FC<Props> = ({
   onCancel,
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onCancel} width="500px" height="400px">
+    <Modal isOpen={isOpen} onClose={onCancel} width="60%" height="400px">
       <Container>
         <h3>Scanned SKU: {scannedSku}</h3>
         <p>
@@ -44,7 +44,7 @@ const BarcodeScannerModal: React.FC<Props> = ({
         <ProductsTable
           onRowClick={onProductSelect}
           products={productsWithScannedSku}
-          actions={[{ icon: '➔', onClick: onProductSelect }]}
+          actions={[{ text: '➔', onClick: onProductSelect }]}
         />
 
         <CancelButton onClick={onCancel}>Cancel</CancelButton>
@@ -53,4 +53,4 @@ const BarcodeScannerModal: React.FC<Props> = ({
   )
 }
 
-export default BarcodeScannerModal
+export default SelectProductModal

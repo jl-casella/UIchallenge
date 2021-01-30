@@ -1,11 +1,20 @@
 import React, { ChangeEvent, useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
+import Button from '../../../common/components/Button'
 
 const Container = styled.div`
   margin-left: 25px;
 
   display: flex;
   flex-direction: row;
+  align-items: center;
+`
+
+const BarcodeInput = styled.input`
+  margin: 0px 5px;
+  height: 32px;
+
+  border: 1px solid black;
 `
 
 const BarcodeScannerHelper = () => {
@@ -31,13 +40,13 @@ const BarcodeScannerHelper = () => {
   return (
     <Container ref={containerRef}>
       <div>[Dev Mode]: Enter a barcode:</div>
-      <input
-        style={{ margin: '0px 5px' }}
+      <BarcodeInput
         value={barcode}
         onChange={onBarcodeChange}
         onKeyDown={(e) => e.stopPropagation()}
+        placeholder="Fill in the SKU..."
       />
-      <button onClick={onSubmit}>Submit</button>
+      <Button onClick={onSubmit}>Submit</Button>
     </Container>
   )
 }

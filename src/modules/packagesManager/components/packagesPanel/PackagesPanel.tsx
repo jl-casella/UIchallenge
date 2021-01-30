@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import Button from '../../../common/components/Button'
 import { Package, Product } from '../../types'
@@ -22,9 +22,26 @@ const TabsContainer = styled.div`
   border-bottom: 1px solid grey;
 `
 
+const ActionsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+
 const AddPackageButton = styled(Button)`
   width: 130px;
-  margin-bottom: 20px;
+  margin-right: 10px;
+`
+
+const ShipButton = styled(Button)`
+  font-weight: bold;
+`
+
+const Warning = styled.p`
+  color: red;
+`
+
+const Success = styled.p`
+  color: green;
 `
 
 interface Props {
@@ -34,6 +51,9 @@ interface Props {
   removePackage: (packageId: number) => void
   selectPackage: (packageId: number) => void
   unpackProduct: (product: Product) => void
+  canShip: boolean
+  onShip: () => void
+  showSuccessMessage: boolean
 }
 
 const PackagesPanel: React.FC<Props> = ({
@@ -43,12 +63,37 @@ const PackagesPanel: React.FC<Props> = ({
   selectPackage,
   removePackage,
   unpackProduct,
+  canShip,
+  onShip,
+  showSuccessMessage,
 }) => {
+  const [isShipWarningVisible, setIsShipWarningVisible] = useState<boolean>(
+    false
+  )
+
+  const handleShipClick = useCallback(() => {
+    if (canShip) {
+      onShip()
+      setIsShipWarningVisible(false)
+    } else {
+      setIsShipWarningVisible(true)
+    }
+  }, [canShip, onShip])
+
   return (
     <Container>
       <h3>Packed Products</h3>
 
-      <AddPackageButton onClick={addPackage}>Add Package</AddPackageButton>
+      <ActionsContainer>
+        <AddPackageButton onClick={addPackage}>Add Package</AddPackageButton>
+        <ShipButton onClick={handleShipClick}>Ship</ShipButton>
+      </ActionsContainer>
+
+      {isShipWarningVisible ? (
+        <Warning>You cannot ship until all products are packed!</Warning>
+      ) : null}
+
+      {showSuccessMessage ? <Success>Packages were shipped!</Success> : null}
 
       <TabsContainer>
         {packages.map((productsPackage, index) => (
@@ -69,7 +114,7 @@ const PackagesPanel: React.FC<Props> = ({
           unpackProduct={unpackProduct}
         />
       ) : (
-        <p>Add a new package to pack items</p>
+        <p>Add a new package or select one to pack items</p>
       )}
     </Container>
   )
