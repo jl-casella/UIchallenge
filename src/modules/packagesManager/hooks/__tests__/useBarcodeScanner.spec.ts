@@ -107,7 +107,7 @@ describe('The userBarcodeScanner hook', () => {
   })
 
   describe('NoMatchingProductsModal', () => {
-    it('Is opened if there are no matching products for the provided SKU', () => {
+    it('Is opened if there are no matching products for the provided SKU, but there are any unpacked products', () => {
       const { result } = renderHook(() =>
         useBarcodeScanner(getMockedProducts(), () => {})
       )
@@ -119,6 +119,18 @@ describe('The userBarcodeScanner hook', () => {
       })
 
       expect(result.current.showNoMatchingProductsModal).toBe(true)
+    })
+
+    it("Doesn't open if there are no unpacked products", () => {
+      const { result } = renderHook(() => useBarcodeScanner([], () => {}))
+
+      expect(result.current.showNoMatchingProductsModal).toBe(false)
+
+      act(() => {
+        fireEvent.keyDown(document.body, { key: 'z' })
+      })
+
+      expect(result.current.showNoMatchingProductsModal).toBe(false)
     })
 
     it('Closes and clears scannedSku on closeNoMatchingProductsModal', () => {

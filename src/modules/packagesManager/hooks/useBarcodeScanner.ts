@@ -47,7 +47,10 @@ const useBarcodeScanner = (
       setShowSelectProductModal(true)
     }
 
-    if (productsStartingWithProvidedSku.length === 0) {
+    if (
+      unpackedProducts.length > 0 &&
+      productsStartingWithProvidedSku.length === 0
+    ) {
       setShowNoMatchingProductsModal(true)
     }
   }, [
@@ -56,7 +59,12 @@ const useBarcodeScanner = (
     packProduct,
     productsWithScannedSku,
     productsStartingWithProvidedSku.length,
+    unpackedProducts.length,
   ])
+
+  useEffect(() => {
+    setScannedSku('')
+  }, [unpackedProducts.length])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {

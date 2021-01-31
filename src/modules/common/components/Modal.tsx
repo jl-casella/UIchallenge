@@ -23,6 +23,7 @@ const Modal: React.FC<Props> = ({
       style={{
         content: {
           display: 'flex',
+          justifyContent: 'center',
           margin: 'auto',
           height,
           width,
