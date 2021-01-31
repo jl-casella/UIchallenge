@@ -19,7 +19,9 @@ const globalStyles = `
   }
 `
 
-export default class MyDocument extends Document {
+export default class MyDocument extends Document<{
+  styleTags: React.ReactElement[]
+}> {
   static async getInitialProps(ctx) {
     const sheet = new ServerStyleSheet()
     const page = ctx.renderPage((App) => (props) =>
