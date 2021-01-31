@@ -18,6 +18,11 @@ const CloseButton = styled(Button)`
   margin-top: 25px;
   margin-bottom: 10px;
 `
+
+const Header = styled.h3`
+  word-break: break-word;
+`
+
 interface Props {
   scannedSku: string
   isOpen: boolean
@@ -32,7 +37,7 @@ const NoMatchingProductsModal: React.FC<Props> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} width="60%" height="250px">
       <Container>
-        <h3 style={{ wordBreak: 'break-word' }}>Scanned SKU: {scannedSku}</h3>
+        <Header>Scanned SKU: {scannedSku}</Header>
         <p>There are no matching products for the provided SKU.</p>
 
         <CloseButton onClick={onClose}>Close</CloseButton>

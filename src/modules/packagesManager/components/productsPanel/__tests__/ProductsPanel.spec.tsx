@@ -1,4 +1,4 @@
-import { getByRole, render } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import getMockedProducts from '../../../mocks/getMockedProducts'
 import ProductsPanel from '../ProductsPanel'
 

@@ -13,6 +13,7 @@ const Table = styled.table`
 
   td {
     cursor: pointer;
+    height: 31px;
   }
 
   th,
